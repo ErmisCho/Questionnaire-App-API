@@ -14,16 +14,40 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import include, path
+from django.urls import path, include
 
-from rest_framework.routers import DefaultRouter
-from questionnaire.views import IterationViewSet, SurveyViewSet
+from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
+from questionnaire.views import SurveyViewSet, IterationViewSet, QuestionViewSet, AnswerOptionViewSet, AnswerViewSet
 
+# Create the root router
 router = DefaultRouter()
 router.register(r'surveys', SurveyViewSet)
 router.register(r'iterations', IterationViewSet)
 
+# Nested routers for establishing hierarchical relationships
+# Nested routes for questions under surveys
+surveys_router = NestedDefaultRouter(router, r'surveys', lookup='survey')
+surveys_router.register(r'questions', QuestionViewSet,
+                        basename='survey-questions')
+
+# Nested routes for answer options under questions
+questions_router = NestedDefaultRouter(
+    surveys_router, r'questions', lookup='question')
+questions_router.register(
+    r'answeroptions', AnswerOptionViewSet, basename='question-answeroptions')
+
+# Nested routes for answers under iterations
+iterations_router = NestedDefaultRouter(
+    router, r'iterations', lookup='iteration')
+iterations_router.register(r'answers', AnswerViewSet,
+                           basename='iteration-answers')
+
+
+# Define URL patterns
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path('', include(router.urls))
+    path("admin/", admin.site.urls),  # Admin panel route
+    path('', include(router.urls)),  # Include routes from the root router
+    path('', include(surveys_router.urls)),
+    path('', include(questions_router.urls)),
+    path('', include(iterations_router.urls)),
 ]
