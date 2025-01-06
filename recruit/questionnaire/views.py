@@ -15,6 +15,13 @@ class IterationViewSet(viewsets.ModelViewSet):
     queryset = Iteration.objects.all()
     serializer_class = IterationSerializer
 
+    def perform_create(self, serializer):
+        survey = serializer.validated_data['survey']
+        if not Survey.objects.filter(key=survey.key).exists():
+            raise ValidationError(
+                f"Survey with key {survey.key} does not exist.")
+        serializer.save()
+
 
 class QuestionViewSet(viewsets.ModelViewSet):
     """Manages questions within a specific survey."""
@@ -22,9 +29,17 @@ class QuestionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         """Override the default queryset to filter questions by their parent survey."""
-        survey_id = self.kwargs['survey_pk']  # Extract the survey ID from the URL
+        if getattr(self, 'swagger_fake_view', False):
+            return Question.objects.none()
+        # Extract the survey ID from the URL
+        survey_id = self.kwargs['survey_pk']
         # Retrieve questions for the specified survey
         return Question.objects.filter(survey_id=survey_id)
+
+    def perform_create(self, serializer):
+        # Set the survey for the new question
+        survey_id = self.kwargs['survey_pk']
+        serializer.save(survey_id=survey_id)
 
 
 class AnswerOptionViewSet(viewsets.ModelViewSet):
@@ -32,6 +47,8 @@ class AnswerOptionViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerOptionSerializer
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Question.objects.none()
         # Get the parent question's ID from the URL
         question_id = self.kwargs['question_pk']
         return AnswerOption.objects.filter(question_id=question_id)
@@ -47,6 +64,8 @@ class AnswerViewSet(viewsets.ModelViewSet):
     serializer_class = AnswerSerializer
 
     def get_queryset(self):
+        if getattr(self, 'swagger_fake_view', False):
+            return Answer.objects.none()
         # Get the parent iteration's ID from the URL
         iteration_id = self.kwargs['iteration_pk']
         return Answer.objects.filter(iteration_id=iteration_id)
