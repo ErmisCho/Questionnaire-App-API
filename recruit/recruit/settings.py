@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "questionnaire",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
