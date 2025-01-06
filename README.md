@@ -10,7 +10,18 @@ This project is a Django REST API for creating and managing surveys, questions, 
 - **User Iterations**: Track survey completions by different users.
 - **Dynamic Status**: Iterations dynamically indicate whether they are completed or incomplete.
 - **Freitext Field**: Users can optionally provide additional information while answering questions.
-- **Interactive API Documentation**: Explore and test endpoints using Swagger.
+- **Interactive API Documentation**: Explore and test endpoints using Swagger and ReDoc.
+- **Interactive Root API Interface**: The root endpoint (/) provides an easy way to explore the app's capabilities.
+
+## API Functionality in Action
+### **Interactive API Form to Add Answers via the Root API Interface**
+![The picture "answers-root-api.png" was not loaded, please download separately](https://github.com/ErmisCho/questionnaire-app-API/blob/master/pictures/answers-root-api.png)
+
+### **Iteration List Endpoint in Swagger**
+![The picture "iterations-swagger.png" was not loaded, please download separately](https://github.com/ErmisCho/questionnaire-app-API/blob/master/pictures/iterations-swagger.png)
+
+### **ReDoc API Documentation Overview**
+![The picture "redoc-example.png" was not loaded, please download separately](https://github.com/ErmisCho/questionnaire-app-API/blob/master/pictures/redoc-example.png)
 
 ## API Documentation
 Interactive API documentation is available:
@@ -39,6 +50,7 @@ These pages allow you to explore the API, test endpoints interactively, and view
 - Django 5.1.4
 - Django REST Framework
 - drf-yasg (for API documentation)
+- PostgreSQL or another relational database with the settings found in recruit/recruit/settings.py
 
 ## Setup Instructions
 1. **Clone the Repository**:
@@ -121,7 +133,6 @@ curl -X POST "http://127.0.0.1:8000/surveys/123e4567-e89b-12d3-a456-426614174000
 curl -X POST "http://127.0.0.1:8000/surveys/123e4567-e89b-12d3-a456-426614174000/questions
 ```
 
-
 # **Error Handling**
 **All endpoints return appropriate HTTP status codes with detailed error messages for invalid requests.**
 
@@ -146,4 +157,6 @@ curl -X POST "http://127.0.0.1:8000/surveys/123e4567-e89b-12d3-a456-426614174000
 - [x] **User Iterations**: Track survey completions by different users.
 - [x] **Dynamic Status**: Iterations dynamically indicate whether they are completed or incomplete.
 - [x] **Freetext Field**: Users can optionally provide additional information while answering questions.
-- [x] **Interactive API Documentation**: Explore and test endpoints using Swagger.
+- [x] **Interactive API Documentation**: Explore and test endpoints using Swagger and ReDoc.
+- [x] **Interactive Root API Interface**: Navigate the root endpoint for easy exploration.
+```
