@@ -37,10 +37,14 @@ class AnswerSerializer(serializers.ModelSerializer):
 class IterationSerializer(serializers.ModelSerializer):
     # Serializer for Iteration, including nested answers and dynamic completion status.
     status = serializers.SerializerMethodField()
-    given_answers = AnswerSerializer(many=True, read_only=True)
+    given_answers = serializers.PrimaryKeyRelatedField(
+        many=True, read_only=True)
 
     class Meta:
         model = Iteration
         fields = ['user', 'key', 'survey', 'status', 'given_answers']
 
-    # TODO: Check if all the answers are completed
+    def get_status(self, obj):
+        total_questions = obj.survey.questions.count()
+        answered_questions = obj.given_answers.count()
+        return 'completed' if answered_questions == total_questions else 'incomplete'
