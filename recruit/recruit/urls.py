@@ -19,6 +19,10 @@ from django.urls import path, include
 from rest_framework_nested.routers import DefaultRouter, NestedDefaultRouter
 from questionnaire.views import SurveyViewSet, IterationViewSet, QuestionViewSet, AnswerOptionViewSet, AnswerViewSet
 
+from rest_framework.permissions import AllowAny
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
 # Create the root router
 router = DefaultRouter()
 router.register(r'surveys', SurveyViewSet)
@@ -42,6 +46,18 @@ iterations_router = NestedDefaultRouter(
 iterations_router.register(r'answers', AnswerViewSet,
                            basename='iteration-answers')
 
+# Swagger/OpenAPI schema view configuration
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Survey App - API",  # API title for documentation
+        default_version="v1",  # API version
+        # Brief API description
+        description="API for managing surveys, questions, and iterations.",
+        terms_of_service="https://www.google.com/policies/terms/",  # Link to terms of service
+    ),
+    public=True,  # Publicly accessible
+    permission_classes=(AllowAny,),  # No authentication required
+)
 
 # Define URL patterns
 urlpatterns = [
@@ -50,4 +66,8 @@ urlpatterns = [
     path('', include(surveys_router.urls)),
     path('', include(questions_router.urls)),
     path('', include(iterations_router.urls)),
+    path('swagger/', schema_view.with_ui('swagger',
+                                         cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc',
+         cache_timeout=0), name='schema-redoc'),
 ]
